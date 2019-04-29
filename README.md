@@ -21,4 +21,5 @@ Where:
 Compatibility
 -------------
 
-Currently, ifpl only runs on Microsoft Windows.
+Currently, ifpl runs on Microsoft Windows.
+Support for Unix/Linux has been added, but is experimental.
