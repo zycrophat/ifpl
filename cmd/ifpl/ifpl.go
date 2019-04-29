@@ -27,6 +27,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"ifpl/internal"
 	"os"
 	"os/exec"
 )
@@ -59,7 +60,7 @@ func main() {
 		os.Exit(exitCodeOffset + 2)
 	}
 
-	go waitForPidToTerminateAndKillProcess(ifplArgs.pid, cmd.Process)
+	go internal.WaitForPidAndKillProcess(ifplArgs.pid, cmd.Process)
 
 	_ = cmd.Wait()
 
@@ -125,15 +126,4 @@ func configureCmd(cmd *exec.Cmd) {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-}
-
-func waitForPidToTerminateAndKillProcess(pid int, process *os.Process) {
-	processToWaitFor, err := os.FindProcess(pid)
-
-	if err == nil {
-		// on Windows we can wait for arbitrary process to terminate
-		_, _ = processToWaitFor.Wait()
-		_ = process.Kill()
-		return
-	}
 }
