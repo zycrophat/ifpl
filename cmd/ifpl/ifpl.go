@@ -29,11 +29,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"time"
 )
 
 const (
-	sleepDuration  = time.Duration(1000) * time.Millisecond
 	exitCodeOffset = 40000
 )
 
@@ -130,16 +128,12 @@ func configureCmd(cmd *exec.Cmd) {
 }
 
 func waitForPidToTerminateAndKillProcess(pid int, process *os.Process) {
-	for {
-		processToWaitFor, err := os.FindProcess(pid)
+	processToWaitFor, err := os.FindProcess(pid)
 
-		if err == nil {
-			// on Windows we can wait for arbitrary process to terminate
-			_, _ = processToWaitFor.Wait()
-			_ = process.Kill()
-			return
-		}
-
-		time.Sleep(sleepDuration)
+	if err == nil {
+		// on Windows we can wait for arbitrary process to terminate
+		_, _ = processToWaitFor.Wait()
+		_ = process.Kill()
+		return
 	}
 }
