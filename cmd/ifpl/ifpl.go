@@ -54,7 +54,7 @@ func main() {
 		os.Exit(exitCodeOffset + 1)
 	}
 
-	cmd := createCmd(ifplArgs.cmdName, ifplArgs.cmdArgs)
+	cmd := createAndConfigureCmd(ifplArgs.cmdName, ifplArgs.cmdArgs)
 
 	err := cmd.Start()
 	if err != nil {
@@ -117,7 +117,7 @@ func parseArgs() ifplArgs {
 	return ifplArgs
 }
 
-func createCmd(cmdName string, cmdArgs []string) *exec.Cmd {
+func createAndConfigureCmd(cmdName string, cmdArgs []string) *exec.Cmd {
 	cmd := exec.Command(cmdName, cmdArgs...)
 	configureCmd(cmd)
 	return cmd
