@@ -30,6 +30,7 @@ import (
 	"ifpl/internal"
 	"os"
 	"os/exec"
+	"os/signal"
 )
 
 const (
@@ -60,6 +61,7 @@ func main() {
 		os.Exit(exitCodeOffset + 2)
 	}
 
+	go redirectSignals(cmd.Process)
 	go internal.WaitForPidAndKillProcess(ifplArgs.pid, cmd.Process)
 
 	_ = cmd.Wait()
@@ -126,4 +128,14 @@ func configureCmd(cmd *exec.Cmd) {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+}
+
+func redirectSignals(process *os.Process) {
+	c := make(chan os.Signal)
+	signal.Notify(c)
+
+	for {
+		s := <-c
+		_ = process.Signal(s)
+	}
 }
