@@ -35,7 +35,7 @@ build-linux:
 dist-linux: build-linux
 	cp README.md $(DIST_DIR_LINUX)/
 	cp LICENSE $(DIST_DIR_LINUX)/
-	cd $(DIST_DIR_LINUX) && tar -zcvf ../../$(BINARY_NAME)_$(VERSION)_linux_x84_64.tar.gz * && cd -
+	cd $(DIST_DIR_LINUX) && tar -zcvf ../../$(BINARY_NAME)_$(VERSION)_linux_x86_64.tar.gz * && cd -
 
 build-windows:
 	mkdir -p $(DIST_DIR_WINDOWS)
@@ -44,4 +44,4 @@ build-windows:
 dist-windows: build-windows
 	cp README.md $(DIST_DIR_WINDOWS)/
 	cp LICENSE $(DIST_DIR_WINDOWS)/
-	cd $(DIST_DIR_WINDOWS) && zip ../../$(BINARY_NAME)_$(VERSION)_windows_x84_64.zip * && cd -
+	cd $(DIST_DIR_WINDOWS) && zip ../../$(BINARY_NAME)_$(VERSION)_windows_x86_64.zip * && cd -
