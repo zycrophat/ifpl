@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	exitCodeOffset = 40000
+	exitCodeOffset = 240
 )
 
 const (
