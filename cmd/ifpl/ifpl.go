@@ -79,10 +79,10 @@ func printHelp() {
 	fmt.Printf("(pid: %d, ppid %d)\n\n", os.Getpid(), os.Getppid())
 
 	fmt.Print("Usage:\n")
-	fmt.Printf("ifpl [-%s] [-%s <pid>] [-%s <signal>] CMD [ARGS ...]\n", helpFlagName, pidFlagName, signalFlagName)
+	fmt.Printf("ifpl [-%s] [-%s PID] [-%s SIGNAL] CMD [ARGS ...]\n", helpFlagName, pidFlagName, signalFlagName)
 	flag.PrintDefaults()
 
-	fmt.Print("\nifpl runs the given CMD and waits for the process with pid <pid> to terminate.\n")
+	fmt.Print("\nifpl runs the given CMD and waits for the process with pid PID to terminate.\n")
 	fmt.Print("Upon termination, the CMD child process will be killed.\n")
 	fmt.Printf("When the -%s option is specified with a non-negative value, the given signal will be sent to the CMD child process.\n", signalFlagName)
 	fmt.Print("Otherwise go's os.Process.Kill() will be used.\n\n")
