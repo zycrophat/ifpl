@@ -31,6 +31,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"syscall"
 )
 
 const (
@@ -38,8 +39,10 @@ const (
 )
 
 const (
-	pidFlagName  = "pid"
-	helpFlagName = "help"
+	pidFlagName       = "pid"
+	helpFlagName      = "help"
+	signalFlagName    = "s"
+	signalFlagDefault = -1
 )
 
 func main() {
@@ -61,8 +64,10 @@ func main() {
 		os.Exit(exitCodeOffset + 2)
 	}
 
+	killFunc := getKillFunc(ifplArgs.signal)
+
 	go redirectSignals(cmd.Process)
-	go internal.WaitForPidAndKillProcess(ifplArgs.pid, cmd.Process)
+	go internal.WaitForPidAndKillProcess(ifplArgs.pid, cmd.Process, killFunc)
 
 	_ = cmd.Wait()
 
@@ -74,11 +79,13 @@ func printHelp() {
 	fmt.Printf("(pid: %d, ppid %d)\n\n", os.Getpid(), os.Getppid())
 
 	fmt.Print("Usage:\n")
-	fmt.Printf("ifpl [-%s] [-%s <pid>] CMD [ARGS ...]\n", helpFlagName, pidFlagName)
+	fmt.Printf("ifpl [-%s] [-%s <pid>] [-%s <signal>] CMD [ARGS ...]\n", helpFlagName, pidFlagName, signalFlagName)
 	flag.PrintDefaults()
 
-	fmt.Print("\nifpl runs the given CMD and waits for the process with pid <pid> to terminate. " +
-		"Upon termination CMD will be killed.\n\n")
+	fmt.Print("\nifpl runs the given CMD and waits for the process with pid <pid> to terminate.\n")
+	fmt.Print("Upon termination, the CMD child process will be killed.\n")
+	fmt.Printf("When the -%s option is specified with a non-negative value, the given signal will be sent to the CMD child process.\n", signalFlagName)
+	fmt.Print("Otherwise go's os.Process.Kill() will be used.\n\n")
 
 }
 
@@ -86,6 +93,7 @@ type ifplArgs struct {
 	pid     int      // the pid to wait for to terminate
 	cmdName string   // the cmd to execute
 	cmdArgs []string // args for the cmd to execute
+	signal  int
 
 	help bool // flag to print help
 }
@@ -93,7 +101,9 @@ type ifplArgs struct {
 func parseArgs() ifplArgs {
 	pid := flag.Int(pidFlagName, os.Getppid(), "the pid to wait for to terminate. "+
 		"Defaults to ppid of ifpl")
-	helpIsRequested := flag.Bool(helpFlagName, false, "displays this help message")
+	help := flag.Bool(helpFlagName, false, "displays this help message")
+	signalArg := flag.Int(signalFlagName, signalFlagDefault, "signal to be sent to CMD")
+
 	flag.Parse()
 	args := flag.Args()
 
@@ -113,7 +123,8 @@ func parseArgs() ifplArgs {
 				return []string{}
 			}
 		}(),
-		help: *helpIsRequested,
+		signal: *signalArg,
+		help:   *help,
 	}
 	return ifplArgs
 }
@@ -138,4 +149,15 @@ func redirectSignals(process *os.Process) {
 		s := <-c
 		_ = process.Signal(s)
 	}
+}
+
+func getKillFunc(signalArg int) internal.KillFunc {
+	var kill internal.KillFunc
+	if signalArg < 0 {
+		kill = internal.Kill
+	} else {
+		kill = internal.GetSendSignalFunc(syscall.Signal(signalArg))
+	}
+
+	return kill
 }

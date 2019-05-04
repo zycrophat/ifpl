@@ -34,9 +34,9 @@ import (
 
 const sleepDuration = time.Duration(1000) * time.Millisecond
 
-func WaitForPidAndKillProcess(pid int, process *os.Process) {
+func WaitForPidAndKillProcess(pid int, process *os.Process, kill KillFunc) {
 	for {
-		processKilled := checkProcFileOfPidAndKillProcess(pid, process)
+		processKilled := checkProcFileOfPidAndKillProcess(pid, process, kill)
 		if processKilled {
 			return
 		}
@@ -44,12 +44,12 @@ func WaitForPidAndKillProcess(pid int, process *os.Process) {
 	}
 }
 
-func checkProcFileOfPidAndKillProcess(pid int, process *os.Process) (processKilled bool) {
+func checkProcFileOfPidAndKillProcess(pid int, process *os.Process, kill KillFunc) (processKilled bool) {
 	f, err := os.OpenFile(fmt.Sprintf("/proc/%d/status", pid), os.O_RDONLY, 0444)
 	defer func() { _ = f.Close() }()
 
 	if err != nil {
-		_ = process.Kill()
+		_ = kill(process)
 		return true
 	}
 	return false

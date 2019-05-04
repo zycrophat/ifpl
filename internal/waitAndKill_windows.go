@@ -28,13 +28,13 @@ package internal
 
 import "os"
 
-func WaitForPidAndKillProcess(pid int, process *os.Process) {
+func WaitForPidAndKillProcess(pid int, process *os.Process, kill KillFunc) {
 	processToWaitFor, err := os.FindProcess(pid)
 
 	if err == nil {
 		// on Windows we can wait for arbitrary process to terminate
 		_, _ = processToWaitFor.Wait()
-		_ = process.Kill()
+		_ = kill(process)
 		return
 	}
 }
