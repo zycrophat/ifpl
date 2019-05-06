@@ -30,3 +30,24 @@ Compatibility
 
 Currently, ifpl runs on Microsoft Windows.
 Support for Unix/Linux has been added, but is experimental.
+
+
+How to build
+------------
+
+Prerequisites:
+
+- Go
+- Make (optional)
+
+To compile:
+
+```
+$ cd cmd/ifpl
+$ go build
+```
+
+To build distributable archives for Linux & Windows:
+```
+$ make dist-linux dist-windows
+```
