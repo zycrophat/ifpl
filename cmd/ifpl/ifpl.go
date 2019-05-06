@@ -57,21 +57,27 @@ func main() {
 		os.Exit(exitCodeOffset + 1)
 	}
 
-	cmd := createAndConfigureCmd(ifplArgs.cmdName, ifplArgs.cmdArgs)
+	killFunc := getKillFunc(ifplArgs.signal)
+
+	exitCode := startAndWaitForCmd(ifplArgs, killFunc)
+
+	os.Exit(exitCode)
+}
+
+func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
+	cmd := createAndConfigureCmd(args.cmdName, args.cmdArgs)
 
 	err := cmd.Start()
 	if err != nil {
 		os.Exit(exitCodeOffset + 2)
 	}
 
-	killFunc := getKillFunc(ifplArgs.signal)
-
 	go redirectSignals(cmd.Process)
-	go internal.WaitForPidAndKillProcess(ifplArgs.pid, cmd.Process, killFunc)
+	go internal.WaitForPidAndKillProcess(args.pid, cmd.Process, killFunc)
 
 	_ = cmd.Wait()
 
-	os.Exit(cmd.ProcessState.ExitCode())
+	return cmd.ProcessState.ExitCode()
 }
 
 func printHelp() {
