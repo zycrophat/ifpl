@@ -4,7 +4,7 @@ ifpl -- if process lives
 Description
 -----------
 
-ifpl runs the given command (say, as process p1) and waits for a process with a specified pid (process p2) to terminate.
+__ifpl__ runs the given command (say, as process p1) and waits for a process with a specified pid (process p2) to terminate.
 Upon termination of p2, ifpl will kill p1.
 
 Usage
