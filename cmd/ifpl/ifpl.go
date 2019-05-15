@@ -158,13 +158,7 @@ func redirectSignals(process *os.Process) {
 
 	for {
 		s := <-c
-		if s != syscall.SIGCHLD {
-			go process.Signal(s)
-		} else {
-			signal.Stop(c)
-			close(c)
-			return // child process has terminated
-		}
+		go process.Signal(s)
 	}
 }
 
