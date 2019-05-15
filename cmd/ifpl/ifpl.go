@@ -28,6 +28,8 @@ import (
 	"flag"
 	"fmt"
 	"ifpl/internal"
+	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -35,18 +37,22 @@ import (
 )
 
 const (
-	exitCodeOffset = 240
+	ifplErrorExitCode = 255
 )
 
 const (
-	pidFlagName       = "pid"
-	helpFlagName      = "help"
+	pidFlagName       = "p"
+	helpFlagName      = "h"
 	signalFlagName    = "s"
 	signalFlagDefault = -1
+	verboseFlagName   = "v"
 )
 
 func main() {
 	ifplArgs := parseArgs()
+
+	configureLog(ifplArgs)
+
 	if ifplArgs.help {
 		printHelp()
 		os.Exit(0)
@@ -54,7 +60,7 @@ func main() {
 
 	if ifplArgs.cmdName == "" {
 		printHelp()
-		os.Exit(exitCodeOffset + 1)
+		os.Exit(ifplErrorExitCode)
 	}
 
 	killFunc := getKillFunc(ifplArgs.signal)
@@ -69,7 +75,8 @@ func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
 
 	err := cmd.Start()
 	if err != nil {
-		os.Exit(exitCodeOffset + 2)
+		log.Printf("Cannot start command: %s\n", err)
+		os.Exit(ifplErrorExitCode)
 	}
 
 	go redirectSignals(cmd.Process)
@@ -85,21 +92,17 @@ func printHelp() {
 	fmt.Printf("(pid: %d, ppid %d)\n\n", os.Getpid(), os.Getppid())
 
 	fmt.Print("Usage:\n")
-	fmt.Printf("ifpl [-%s] [-%s PID] [-%s SIGNAL] CMD [ARGS ...]\n", helpFlagName, pidFlagName, signalFlagName)
+	fmt.Printf("ifpl [-%s] [-%s PID] [-%s SIGNAL] [-%s] CMD [ARGS ...]\n",
+		helpFlagName, pidFlagName, signalFlagName, verboseFlagName)
 	flag.PrintDefaults()
-
-	fmt.Print("\nifpl runs the given CMD and waits for the process with pid PID to terminate.\n")
-	fmt.Print("Upon termination, the CMD child process will be killed.\n")
-	fmt.Printf("When the -%s option is specified with a non-negative value, the given signal will be sent to the CMD child process.\n", signalFlagName)
-	fmt.Print("Otherwise go's os.Process.Kill() will be used.\n\n")
-
 }
 
 type ifplArgs struct {
-	pid     int      // the pid to wait for to terminate
-	cmdName string   // the cmd to execute
-	cmdArgs []string // args for the cmd to execute
-	signal  int
+	pid        int      // the pid to wait for to terminate
+	cmdName    string   // the cmd to execute
+	cmdArgs    []string // args for the cmd to execute
+	signal     int
+	verboseArg bool
 
 	help bool // flag to print help
 }
@@ -109,6 +112,7 @@ func parseArgs() ifplArgs {
 		"Defaults to ppid of ifpl")
 	help := flag.Bool(helpFlagName, false, "displays this help message")
 	signalArg := flag.Int(signalFlagName, signalFlagDefault, "signal to be sent to CMD")
+	verboseArg := flag.Bool(verboseFlagName, false, "prints ifpl error messages to stdout")
 
 	flag.Parse()
 	args := flag.Args()
@@ -129,8 +133,9 @@ func parseArgs() ifplArgs {
 				return []string{}
 			}
 		}(),
-		signal: *signalArg,
-		help:   *help,
+		signal:     *signalArg,
+		help:       *help,
+		verboseArg: *verboseArg,
 	}
 	return ifplArgs
 }
@@ -148,12 +153,18 @@ func configureCmd(cmd *exec.Cmd) {
 }
 
 func redirectSignals(process *os.Process) {
-	c := make(chan os.Signal)
+	c := make(chan os.Signal, 1)
 	signal.Notify(c)
 
 	for {
 		s := <-c
-		go process.Signal(s)
+		if s != syscall.SIGCHLD {
+			go process.Signal(s)
+		} else {
+			signal.Stop(c)
+			close(c)
+			return // child process has terminated
+		}
 	}
 }
 
@@ -165,5 +176,13 @@ func getKillFunc(signalArg int) internal.KillFunc {
 		kill = internal.GetSendSignalFunc(syscall.Signal(signalArg))
 	}
 
-	return kill
+	killAndLog := internal.GetLoggingKillFunc(kill)
+	return killAndLog
+}
+
+func configureLog(args ifplArgs) {
+	if !args.verboseArg {
+		log.SetOutput(ioutil.Discard)
+	}
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
 }

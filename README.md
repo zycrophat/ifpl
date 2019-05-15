@@ -10,7 +10,7 @@ Upon termination of p2, ifpl will kill p1.
 Usage
 -----
 
-`$ ifpl [-help] [-pid PID] [-s SIGNAL] CMD [ARGS ...]`
+`$ ifpl [-help] [-pid PID] [-s SIGNAL] [-v] CMD [ARGS ...]`
 
 Where:
 
@@ -18,12 +18,14 @@ Where:
   - `-pid PID` specifies the PID of the process to wait for to terminate. Defaults to ppid of ifpl.
   - `-s SIGNAL` specifies a signal to send to the `CMD` child process
   - `CMD [ARGS ...]` specifies the CMD and optionally arguments
-  
-ifpl runs the given `CMD` and waits for the process with pid `PID` to terminate.
+  - `-v` prints ifpl error messages to stdout
+
+__ifpl__ runs the given `CMD` and waits for the process with pid `PID` to terminate.
 Upon termination, the `CMD` child process will be killed.
 When the `-s` option is specified with a non-negative value, the given signal will be sent to the CMD child process.
 Otherwise go's [os.Process.Kill()](https://golang.org/pkg/os/#Process.Kill) will be used.
 
+__ifpl__ returns with the exit status of `CMD` or with 255 if an error occurred.
 
 Compatibility
 -------------

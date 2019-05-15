@@ -25,6 +25,7 @@
 package internal
 
 import (
+	"log"
 	"os"
 )
 
@@ -37,5 +38,15 @@ func Kill(process *os.Process) error {
 func GetSendSignalFunc(signal os.Signal) KillFunc {
 	return func(process *os.Process) error {
 		return process.Signal(signal)
+	}
+}
+
+func GetLoggingKillFunc(kill KillFunc) KillFunc {
+	return func(process *os.Process) error {
+		err := kill(process)
+		if err != nil {
+			log.Printf("Error encountered when killing process %s\n", process.Pid)
+		}
+		return err
 	}
 }
