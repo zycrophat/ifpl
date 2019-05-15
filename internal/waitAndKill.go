@@ -45,7 +45,7 @@ func GetLoggingKillFunc(kill KillFunc) KillFunc {
 	return func(process *os.Process) error {
 		err := kill(process)
 		if err != nil {
-			log.Printf("Error encountered when killing process %s\n", process.Pid)
+			log.Printf("Error encountered when killing process %d\n", process.Pid)
 		}
 		return err
 	}
