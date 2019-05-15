@@ -30,7 +30,7 @@ __ifpl__ returns with the exit status of `CMD` or with 255 if an error occurred.
 Compatibility
 -------------
 
-Currently, ifpl runs on Microsoft Windows.
+Currently, __ifpl__ runs on Microsoft Windows.
 Support for Unix/Linux has been added, but is experimental.
 
 
