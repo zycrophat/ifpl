@@ -158,7 +158,7 @@ func redirectSignals(process *os.Process) {
 
 	for {
 		s := <-c
-		go process.Signal(s)
+		go func() { _ = process.Signal(s) }()
 	}
 }
 
