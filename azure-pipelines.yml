@@ -12,7 +12,7 @@ pool:
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOROOT: '/usr/local/go1.11' # Go installation path
+  GOROOT: '/usr/local/go1.12' # Go installation path
   GOPATHX: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
   modulePath: '$(GOPATHX)/src/github.com/$(build.repository.name)' # Path to the module's code
 
@@ -28,11 +28,15 @@ steps:
     ls -aR '$(modulePath)'
   displayName: 'Set up the Go workspace'
 
-- script: go version
+- script: |
+    go version
+    echo '$(modulePath)'
   workingDirectory: '$(modulePath)'
   displayName: 'go print version'
 
-- bash: make dist-all
+- bash: |
+    echo '$(modulePath)'
+    make dist-all
   workingDirectory: '$(modulePath)'
   displayName: 'Run make'
 
