@@ -36,7 +36,7 @@ steps:
 
 - bash: |
     echo '$(modulePath)'
-    make dist-all
+    make dist-linux
   workingDirectory: '$(modulePath)'
   displayName: 'Run make'
 
