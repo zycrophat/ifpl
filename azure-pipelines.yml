@@ -25,6 +25,7 @@ steps:
     mv !(gopath) '$(modulePath)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
+    ls -aR '$(modulePath)'
   displayName: 'Set up the Go workspace'
 
 - bash: make dist-all
