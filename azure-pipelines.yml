@@ -12,7 +12,7 @@ pool:
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOROOT: '/usr/local/go1.11' # Go installation path
+  GOROOT: '/usr/local/go1.12.4' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
   modulePath: '$(GOPATH)/src/ifpl' # Path to the module's code
 
@@ -36,7 +36,7 @@ steps:
 
 - bash: |
     echo '$(modulePath)'
-    make dist-linux
+    make dist-all
   workingDirectory: '$(modulePath)'
   displayName: 'Run make'
 
