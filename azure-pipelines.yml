@@ -28,6 +28,7 @@ steps:
   displayName: 'Set up the Go workspace'
 
 - bash: make dist-all
+  workingDirectory: '$(modulePath)'
   displayName: 'Run make'
 
 - task: CopyFiles@2
