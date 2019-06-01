@@ -11,8 +11,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: make dist-all
-  displayName: 'Run a one-line script'
+- bash: make dist-all
+  displayName: 'Run make'
 
 - task: CopyFiles@2
   inputs:
