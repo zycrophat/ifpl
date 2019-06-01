@@ -48,7 +48,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    Contents: '/home/vsts/work/1/gopath/src/ifpl/build/dist/*.zip'
+    Contents: '$(modulePath)/build/dist/**/*'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     FlattenFolders: true
 
