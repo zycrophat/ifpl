@@ -36,8 +36,7 @@ steps:
 - script: |
     go version
     echo '$(modulePath)'
-    git describe --tags
-    git describe --tags --always
+    ls -aR $(Agent.BuildDirectory)
   workingDirectory: '$(modulePath)'
   displayName: 'go print version'
 
