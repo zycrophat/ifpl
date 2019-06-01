@@ -42,7 +42,7 @@ steps:
 - bash: |
     echo '$(modulePath)'
     make dist-all
-    ls -aR '$(modulePath)/build/dist'
+    ls -a '$(modulePath)/build/dist'
   workingDirectory: '$(modulePath)'
   displayName: 'Run make'
 
