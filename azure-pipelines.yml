@@ -42,13 +42,13 @@ steps:
 - bash: |
     echo '$(modulePath)'
     make dist-all
-    ls -aR '$(modulePath)/build'
+    ls -aR '$(modulePath)/build/dist'
   workingDirectory: '$(modulePath)'
   displayName: 'Run make'
 
 - task: CopyFiles@2
   inputs:
-    Contents: '$(modulePath)/build/dist/**/*'
+    Contents: '$(modulePath)/build/dist/*'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     FlattenFolders: true
 
