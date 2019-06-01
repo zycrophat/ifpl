@@ -13,9 +13,8 @@ pool:
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.11' # Go installation path
-  GOPATHX: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(GOPATHX)/src/github.com/$(build.repository.name)' # Path to the module's code
-  GOPATH: '$(modulePath)'
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  modulePath: '$(GOPATH)/src/ifpl' # Path to the module's code
 
 steps:
 - script: |
