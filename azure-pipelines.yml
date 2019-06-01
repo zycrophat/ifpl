@@ -28,9 +28,9 @@ steps:
     ls -aR '$(modulePath)'
   displayName: 'Set up the Go workspace'
 
-- script: go get -v -t -d ./...
+- script: go version
   workingDirectory: '$(modulePath)'
-  displayName: 'go get dependencies'
+  displayName: 'go print version'
 
 - bash: make dist-all
   workingDirectory: '$(modulePath)'
