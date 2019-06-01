@@ -1,0 +1,27 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+  tags:
+    include:
+    - v*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: make dist-all
+  displayName: 'Run a one-line script'
+
+- task: CopyFiles@2
+  inputs:
+    Contents: 'build/dist/*'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    FlattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'distributions'
+    publishLocation: 'Container'
