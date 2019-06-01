@@ -36,6 +36,8 @@ steps:
 - script: |
     go version
     echo '$(modulePath)'
+    git describe --tags
+    git describe --tags --always
   workingDirectory: '$(modulePath)'
   displayName: 'go print version'
 
