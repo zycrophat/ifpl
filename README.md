@@ -54,5 +54,5 @@ $ go build
 
 To build distributable archives for Linux & Windows:
 ```
-$ make dist-linux dist-windows
+$ make dist-windows-x86-64 dist-linux-x86-64 dist-linux-arm64
 ```
