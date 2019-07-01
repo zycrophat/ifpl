@@ -33,6 +33,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"strings"
 	"syscall"
 )
 
@@ -41,17 +42,21 @@ const (
 )
 
 const (
-	pidFlagName       = "p"
-	helpFlagName      = "h"
-	signalFlagName    = "s"
+	pidFlagName = "p"
+	helpFlagName = "h"
+	signalFlagName = "s"
 	signalFlagDefault = -1
-	verboseFlagName   = "v"
+	verboseFlagName = "v"
+	logFilePathFlagName = "l"
 )
 
 func main() {
 	ifplArgs := parseArgs()
 
-	configureLog(ifplArgs)
+	f := configureLog(ifplArgs)
+	if f != nil {
+		defer func () { _ = f.Close() }()
+	}
 
 	if ifplArgs.help {
 		printHelp()
@@ -73,6 +78,7 @@ func main() {
 func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
 	cmd := createAndConfigureCmd(args.cmdName, args.cmdArgs)
 
+	log.Printf("Starting command: %s %s\n", cmd.Path, strings.Join(cmd.Args[1:], " "))
 	err := cmd.Start()
 	if err != nil {
 		log.Printf("Cannot start command: %s\n", err)
@@ -81,7 +87,9 @@ func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
 
 	go redirectSignals(cmd.Process)
 	go internal.WaitForPidAndKillProcess(args.pid, cmd.Process, killFunc)
+	log.Printf("Waiting for process %d to terminate\n", args.pid)
 
+	log.Printf("Waiting for command to terminate\n")
 	_ = cmd.Wait()
 
 	return cmd.ProcessState.ExitCode()
@@ -104,7 +112,9 @@ type ifplArgs struct {
 	signal     int
 	verboseArg bool
 
-	help bool // flag to print help
+	help           bool // flag to print help
+	isWriteLogFile bool
+	logFilePathArg string
 }
 
 func parseArgs() ifplArgs {
@@ -113,9 +123,12 @@ func parseArgs() ifplArgs {
 	help := flag.Bool(helpFlagName, false, "displays this help message")
 	signalArg := flag.Int(signalFlagName, signalFlagDefault, "signal to be sent to CMD")
 	verboseArg := flag.Bool(verboseFlagName, false, "prints ifpl error messages to stdout")
+	logFilePathArg := flag.String(logFilePathFlagName, "", "file to write log messages to (implies -v)")
 
 	flag.Parse()
 	args := flag.Args()
+
+	flagImplies(logFilePathFlagName, verboseArg)
 
 	ifplArgs := ifplArgs{
 		pid: *pid,
@@ -136,8 +149,26 @@ func parseArgs() ifplArgs {
 		signal:     *signalArg,
 		help:       *help,
 		verboseArg: *verboseArg,
+		isWriteLogFile: isFlagSet(logFilePathFlagName),
+		logFilePathArg: *logFilePathArg,
 	}
 	return ifplArgs
+}
+
+func flagImplies(flagName string, impliedArg *bool) {
+	if isFlagSet(flagName) {
+		*impliedArg = true
+	}
+}
+
+func isFlagSet(flagName string) bool {
+	isFlagSet := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == flagName {
+			isFlagSet = true
+		}
+	})
+	return isFlagSet
 }
 
 func createAndConfigureCmd(cmdName string, cmdArgs []string) *exec.Cmd {
@@ -174,9 +205,22 @@ func getKillFunc(signalArg int) internal.KillFunc {
 	return killAndLog
 }
 
-func configureLog(args ifplArgs) {
+func configureLog(args ifplArgs) *os.File {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+
 	if !args.verboseArg {
 		log.SetOutput(ioutil.Discard)
+	} else {
+		if args.isWriteLogFile {
+			f, err := os.Create(args.logFilePathArg)
+			if err != nil {
+				log.Printf("Cannot write log to file: %s\n", err)
+				os.Exit(ifplErrorExitCode)
+			}
+			log.SetOutput(f)
+
+			return f
+		}
 	}
-	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+	return nil
 }

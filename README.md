@@ -13,7 +13,7 @@ Upon termination of p2, __ifpl__ will kill p1.
 Usage
 -----
 
-`$ ifpl [-help] [-pid PID] [-s SIGNAL] [-v] CMD [ARGS ...]`
+`$ ifpl [-help] [-pid PID] [-s SIGNAL] [-v] [-l LOGFILE] CMD [ARGS ...]`
 
 Where:
 
@@ -21,7 +21,8 @@ Where:
   - `-pid PID` specifies the PID of the process to wait for to terminate. Defaults to ppid of ifpl.
   - `-s SIGNAL` specifies a signal to send to the `CMD` child process
   - `CMD [ARGS ...]` specifies the CMD and optionally arguments
-  - `-v` prints ifpl error messages to stdout
+  - `-v` prints ifpl log messages to stdout (unless `-l` is set)
+  - `-l LOGFILE` file to write log messages to (implies `-v`)
 
 __ifpl__ runs the given `CMD` and waits for the process with pid `PID` to terminate.
 Upon termination, the `CMD` child process will be killed.

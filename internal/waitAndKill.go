@@ -43,6 +43,7 @@ func GetSendSignalFunc(signal os.Signal) KillFunc {
 
 func GetLoggingKillFunc(kill KillFunc) KillFunc {
 	return func(process *os.Process) error {
+		log.Printf("Killing process %d", process.Pid)
 		err := kill(process)
 		if err != nil {
 			log.Printf("Error encountered when killing process %d\n", process.Pid)
