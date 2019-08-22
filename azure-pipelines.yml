@@ -12,14 +12,14 @@ pool:
 
 variables:
   GOPATH: '$(Agent.BuildDirectory)/gopath' # Go workspace path
-  GOROOT: '$(Agent.BuildDirectory)/go' # Go installation path
-  GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOVERSION: '1.12.6'
-  modulePath: '$(GOPATH)/src/ifpl' # Path to the module's code
+  GOROOT: '$(Agent.BuildDirectory)' # Go installation path
+  GOBIN:  '$(GOROOT_1_12_X64)/bin' # Go binaries path
+  GOVERSION: '1.12.7'
+  modulePath: '$(GOPATH)/src/github.com/zycrophat/ifpl' # Path to the module's code
 
 steps:
 - script: |
-    mkdir -p '$(GOBIN)'
+    # mkdir -p '$(GOBIN)'
     mkdir -p '$(GOPATH)/pkg'
     mkdir -p '$(modulePath)'
     shopt -s extglob
@@ -29,11 +29,6 @@ steps:
     echo '##vso[task.prependpath]$(GOROOT)/bin'
     ls -aR '$(modulePath)'
   displayName: 'Set up the Go workspace'
-
-- script: |
-    wget "https://storage.googleapis.com/golang/go$(GOVERSION).linux-amd64.tar.gz" --output-document "$(Agent.BuildDirectory)/go$(GOVERSION).tar.gz"
-    tar -C '$(Agent.BuildDirectory)' -xzf "$(Agent.BuildDirectory)/go$(GOVERSION).tar.gz"
-  displayName: 'Install Go $(GOVERSION)'
 
 - bash: make dist-all
   workingDirectory: '$(modulePath)'
