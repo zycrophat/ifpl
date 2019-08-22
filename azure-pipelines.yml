@@ -15,7 +15,7 @@ variables:
   GOROOT: '$(Agent.BuildDirectory)/go' # Go installation path
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOVERSION: '1.12.9'
-  modulePath: '$(GOPATH)/src/ifpl' # Path to the module's code
+  modulePath: '$(GOPATH)/src/github.com/zycrophat/ifpl' # Path to the module's code
 
 steps:
 - script: |
