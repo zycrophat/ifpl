@@ -11,8 +11,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  GOPATH: '$(Agent.BuildDirectory)/gopath' # Go workspace path
-  GOROOT: '$(Agent.BuildDirectory)' # Go installation path
+  GOPATH: '$(GOROOT_1_12_X64' # Go workspace path
+  GOROOT: '$(GOROOT_1_12_X64)' # Go installation path
   GOBIN:  '$(GOROOT_1_12_X64)/bin' # Go binaries path
   GOVERSION: '1.12.7'
   modulePath: '$(GOPATH)/src/github.com/zycrophat/ifpl' # Path to the module's code
