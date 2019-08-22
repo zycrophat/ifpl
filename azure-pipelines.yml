@@ -11,7 +11,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  GOPATH: '$(GOROOT_1_12_X64' # Go workspace path
+  GOPATH: '$(GOROOT_1_12_X64)' # Go workspace path
   GOROOT: '$(GOROOT_1_12_X64)' # Go installation path
   GOBIN:  '$(GOROOT_1_12_X64)/bin' # Go binaries path
   GOVERSION: '1.12.7'
