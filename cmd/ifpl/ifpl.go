@@ -27,7 +27,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"ifpl/internal"
+	"github.com/zycrophat/ifpl/internal"
 	"io/ioutil"
 	"log"
 	"os"
@@ -42,11 +42,11 @@ const (
 )
 
 const (
-	pidFlagName = "p"
-	helpFlagName = "h"
-	signalFlagName = "s"
-	signalFlagDefault = -1
-	verboseFlagName = "v"
+	pidFlagName         = "p"
+	helpFlagName        = "h"
+	signalFlagName      = "s"
+	signalFlagDefault   = -1
+	verboseFlagName     = "v"
 	logFilePathFlagName = "l"
 )
 
@@ -55,7 +55,7 @@ func main() {
 
 	f := configureLog(ifplArgs)
 	if f != nil {
-		defer func () { _ = f.Close() }()
+		defer func() { _ = f.Close() }()
 	}
 
 	if ifplArgs.help {
@@ -146,9 +146,9 @@ func parseArgs() ifplArgs {
 				return []string{}
 			}
 		}(),
-		signal:     *signalArg,
-		help:       *help,
-		verboseArg: *verboseArg,
+		signal:         *signalArg,
+		help:           *help,
+		verboseArg:     *verboseArg,
 		isWriteLogFile: isFlagSet(logFilePathFlagName),
 		logFilePathArg: *logFilePathArg,
 	}
