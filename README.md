@@ -13,12 +13,12 @@ Upon termination of p2, __ifpl__ will kill p1.
 Usage
 -----
 
-`$ ifpl [-help] [-pid PID] [-s SIGNAL] [-v] [-l LOGFILE] CMD [ARGS ...]`
+`$ ifpl [-h] [-p PID] [-s SIGNAL] [-v] [-l LOGFILE] CMD [ARGS ...]`
 
 Where:
 
-  - `-help` displays a help message
-  - `-pid PID` specifies the PID of the process to wait for to terminate. Defaults to ppid of ifpl.
+  - `-h` displays a help message
+  - `-p PID` specifies the PID of the process to wait for to terminate. Defaults to ppid of ifpl.
   - `-s SIGNAL` specifies a signal to send to the `CMD` child process
   - `CMD [ARGS ...]` specifies the CMD and optionally arguments
   - `-v` prints ifpl log messages to stdout (unless `-l` is set)
@@ -35,7 +35,7 @@ Compatibility
 -------------
 
 Currently, __ifpl__ runs on Microsoft Windows.
-Support for Unix/Linux has been added, but is experimental.
+For Unix/Linux procfs is required.
 
 
 How to build
@@ -43,7 +43,7 @@ How to build
 
 Prerequisites:
 
-- Go
+- Go1.12
 - Make (optional)
 
 To compile:
