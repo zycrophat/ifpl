@@ -26,7 +26,7 @@ VERSION=$(shell git describe --tags)
 
 all: test build
 build:
-	mkdir -p $(BUILD_DIR_LOCAL)
+	mkdir -p $(BIN_DIR_LOCAL)
 	$(GOBUILD) -o $(BINARY_LOCAL) -v $(CMD)
 test: 
 	$(GOTEST) -v ./...
