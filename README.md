@@ -1,3 +1,4 @@
+[![GitHub](https://img.shields.io/github/license/zycrophat/ifpl)](https://raw.githubusercontent.com/zycrophat/ifpl/master/LICENSE)
 [![Build Status](https://dev.azure.com/zycrophat/ifpl/_apis/build/status/zycrophat.ifpl?branchName=master)](https://dev.azure.com/zycrophat/ifpl/_build)
 [![Release Status](https://vsrm.dev.azure.com/zycrophat/_apis/public/Release/badge/96fe8055-2206-46dc-8be0-0418979b43cd/1/1)](https://dev.azure.com/zycrophat/ifpl/_release?definitionId=1)
 
