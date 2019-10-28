@@ -28,6 +28,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/zycrophat/ifpl/internal"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -91,6 +92,7 @@ func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
 
 	log.Printf("Waiting for command to terminate\n")
 	_ = cmd.Wait()
+	log.Printf("Command has terminateddd\n")
 
 	return cmd.ProcessState.ExitCode()
 }
@@ -122,13 +124,13 @@ func parseArgs() ifplArgs {
 		"Defaults to ppid of ifpl")
 	help := flag.Bool(helpFlagName, false, "displays this help message")
 	signalArg := flag.Int(signalFlagName, signalFlagDefault, "signal to be sent to CMD")
-	verboseArg := flag.Bool(verboseFlagName, false, "prints ifpl error messages to stdout")
-	logFilePathArg := flag.String(logFilePathFlagName, "", "file to write log messages to (implies -v)")
+	verboseArg := flag.Bool(verboseFlagName, false, "prints ifpl log messages to stdout")
+	logFilePathArg := flag.String(logFilePathFlagName, "", "file to write log messages to")
 
 	flag.Parse()
 	args := flag.Args()
 
-	flagImplies(logFilePathFlagName, verboseArg)
+	//flagImplies(logFilePathFlagName, verboseArg)
 
 	ifplArgs := ifplArgs{
 		pid: *pid,
@@ -153,12 +155,6 @@ func parseArgs() ifplArgs {
 		logFilePathArg: *logFilePathArg,
 	}
 	return ifplArgs
-}
-
-func flagImplies(flagName string, impliedArg *bool) {
-	if isFlagSet(flagName) {
-		*impliedArg = true
-	}
 }
 
 func isFlagSet(flagName string) bool {
@@ -205,22 +201,30 @@ func getKillFunc(signalArg int) internal.KillFunc {
 	return killAndLog
 }
 
-func configureLog(args ifplArgs) *os.File {
+func configureLog(args ifplArgs) io.Closer {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
 
-	if !args.verboseArg {
-		log.SetOutput(ioutil.Discard)
-	} else {
-		if args.isWriteLogFile {
-			f, err := os.Create(args.logFilePathArg)
-			if err != nil {
-				log.Printf("Cannot write log to file: %s\n", err)
-				os.Exit(ifplErrorExitCode)
-			}
-			log.SetOutput(f)
-
-			return f
+	consoleWriter := func() io.Writer {
+		if args.verboseArg {
+			return os.Stdout
+		} else {
+			return ioutil.Discard
 		}
+	}()
+
+	if args.isWriteLogFile {
+		f, err := os.OpenFile(args.logFilePathArg, os.O_CREATE | os.O_APPEND | os.O_RDWR, 0666)
+		if err != nil {
+			log.Printf("Cannot write log to file: %s\n", err)
+			os.Exit(ifplErrorExitCode)
+		}
+		multiWriter := io.MultiWriter(f, consoleWriter)
+		log.SetOutput(multiWriter)
+
+		return f
+	} else {
+		log.SetOutput(consoleWriter)
 	}
+
 	return nil
 }
