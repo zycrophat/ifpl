@@ -98,12 +98,12 @@ func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
 }
 
 func printHelp() {
-	fmt.Print("ifpl -- if process lives\n")
+	fmt.Print("ifpl ─ if process lives\n")
 	fmt.Printf("(pid: %d, ppid %d)\n\n", os.Getpid(), os.Getppid())
 
 	fmt.Print("Usage:\n")
-	fmt.Printf("ifpl [-%s] [-%s PID] [-%s SIGNAL] [-%s] CMD [ARGS ...]\n",
-		helpFlagName, pidFlagName, signalFlagName, verboseFlagName)
+	fmt.Printf("ifpl [-%s] [-%s PID] [-%s SIGNAL] [-%s] [-%s LOGFILE] CMD [ARGS ...]\n",
+		helpFlagName, pidFlagName, signalFlagName, verboseFlagName, logFilePathFlagName)
 	flag.PrintDefaults()
 }
 
