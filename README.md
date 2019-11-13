@@ -2,8 +2,8 @@
 [![Build Status](https://dev.azure.com/zycrophat/ifpl/_apis/build/status/zycrophat.ifpl?branchName=master)](https://dev.azure.com/zycrophat/ifpl/_build)
 [![Release Status](https://vsrm.dev.azure.com/zycrophat/_apis/public/Release/badge/96fe8055-2206-46dc-8be0-0418979b43cd/1/1)](https://dev.azure.com/zycrophat/ifpl/_release?definitionId=1)
 
-ifpl -- if process lives
-========================
+ifpl ─ if process lives
+=======================
 
 Description
 -----------
@@ -21,9 +21,9 @@ Where:
   - `-h` displays a help message
   - `-p PID` specifies the PID of the process to wait for to terminate. Defaults to ppid of ifpl.
   - `-s SIGNAL` specifies a signal to send to the `CMD` child process
-  - `CMD [ARGS ...]` specifies the CMD and optionally arguments
   - `-v` prints ifpl log messages to stdout
   - `-l LOGFILE` file to write log messages to
+  - `CMD [ARGS ...]` specifies the CMD and optionally arguments
 
 __ifpl__ runs the given `CMD` and waits for the process with pid `PID` to terminate.
 Upon termination, the `CMD` child process will be killed.
