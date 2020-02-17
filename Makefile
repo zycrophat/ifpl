@@ -24,6 +24,7 @@ DIST_DIR_WINDOWS_X86_64=$(DIST_DIR)/windows_x86_64
 CMD=./cmd/$(BINARY_NAME)/ifpl.go
 VERSION=$(shell git describe --tags)
 
+.PHONY: build test clean build-linux-x86-64 build-linux-arm64 build-windows-x86-64
 all: test build
 build:
 	mkdir -p $(BIN_DIR_LOCAL)
