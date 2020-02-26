@@ -130,8 +130,6 @@ func parseArgs() ifplArgs {
 	flag.Parse()
 	args := flag.Args()
 
-	//flagImplies(logFilePathFlagName, verboseArg)
-
 	ifplArgs := ifplArgs{
 		pid: *pid,
 		cmdName: func() string {
