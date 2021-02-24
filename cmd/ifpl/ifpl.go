@@ -92,7 +92,7 @@ func startAndWaitForCmd(args ifplArgs, killFunc internal.KillFunc) int {
 
 	log.Printf("Waiting for command to terminate\n")
 	_ = cmd.Wait()
-	log.Printf("Command has terminateddd\n")
+	log.Printf("Command has terminated\n")
 
 	return cmd.ProcessState.ExitCode()
 }
@@ -129,8 +129,6 @@ func parseArgs() ifplArgs {
 
 	flag.Parse()
 	args := flag.Args()
-
-	//flagImplies(logFilePathFlagName, verboseArg)
 
 	ifplArgs := ifplArgs{
 		pid: *pid,
@@ -213,7 +211,7 @@ func configureLog(args ifplArgs) io.Closer {
 	}()
 
 	if args.isWriteLogFile {
-		f, err := os.OpenFile(args.logFilePathArg, os.O_CREATE | os.O_APPEND | os.O_RDWR, 0666)
+		f, err := os.OpenFile(args.logFilePathArg, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 		if err != nil {
 			log.Printf("Cannot write log to file: %s\n", err)
 			os.Exit(ifplErrorExitCode)

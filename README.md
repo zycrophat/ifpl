@@ -44,7 +44,7 @@ How to build
 
 Prerequisites:
 
-- Go1.13.8
+- Go1.14
 - Make (optional)
 
 To compile:
